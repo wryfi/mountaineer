@@ -101,14 +101,15 @@ class DeviceBase(models.Model):
     manufacturer = models.CharField(max_length=128)
     model = models.CharField(max_length=128)
     serial = models.CharField(max_length=256)
-    asset_id = models.PositiveIntegerField(unique=True, blank=True, null=True, help_text='ID in external asset database, if any.')
-    asset_tag = models.CharField(max_length=128, unique=True, blank=True, help_text='Asset tag, if any.')
+    asset_id = models.PositiveIntegerField(blank=True, null=True, help_text='ID in external asset database, if any.')
+    asset_tag = models.CharField(max_length=128, blank=True, help_text='Asset tag, if any.')
     rack_units = models.IntegerField(blank=True, null=True, help_text='Height of the device, in Rack Units')
     draw = models.PositiveIntegerField(blank=True, null=True, help_text='Power draw of the device, in Watts')
     device = models.OneToOneField('Device', null=True, blank=True, editable=False)
 
     class Meta:
         abstract = True
+        unique_together = ('manufacturer', 'model', 'serial')
 
     def __str__(self):
         return '{} {}'.format(self.manufacturer, self.model)
@@ -131,7 +132,7 @@ class DeviceBase(models.Model):
     @cached_property
     def pdus(self):
         assignments = PortAssignment.objects.filter(connected_device=self.device)
-        return [(assign.device, assign.device_port) for assign in assignments if assign.device.type == PowerDistributionUnit]
+        return [(assign.device.object, assign.device_port) for assign in assignments if assign.device.type == PowerDistributionUnit]
 
     def save(self, *args, **kwargs):
         if not self.device:
@@ -141,7 +142,7 @@ class DeviceBase(models.Model):
     @cached_property
     def uplinks(self):
         assignments = PortAssignment.objects.filter(connected_device=self.device)
-        return [(assign.device, assign.device_port) for assign in assignments if assign.device.type == NetworkDevice]
+        return [(assign.device.object, assign.device_port) for assign in assignments if assign.device.type == NetworkDevice]
 
 
 class Server(DeviceBase):
