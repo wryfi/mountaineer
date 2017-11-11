@@ -58,7 +58,7 @@ class Cabinet(SlugModel):
         return [(assign.device.object, assign.position) for assign in assignments]
 
 
-class CabinetAssignment(models.Model):
+class CabinetAssignment(SlugModel):
     cabinet = models.ForeignKey('Cabinet')
     position = models.PositiveIntegerField(blank=True, null=True)
     orientation = EnumIntegerField(RackOrientation, blank=True, null=True)
@@ -99,7 +99,7 @@ class Device(models.Model):
                 return type(getattr(self, attr))
 
 
-class DeviceBase(SlugModel):
+class DeviceBase(models.Model):
     manufacturer = models.CharField(max_length=128)
     model = models.CharField(max_length=128)
     serial = models.CharField(max_length=256)
@@ -151,7 +151,7 @@ class DeviceBase(SlugModel):
         return [(assign.device.object, assign.device_port) for assign in assignments if assign.device.type == NetworkDevice]
 
 
-class Server(DeviceBase):
+class Server(DeviceBase, SlugModel):
     cpu_count = models.PositiveIntegerField(null=True, blank=True, help_text='Number of physical, socketed CPUs (not cores or threads)')
     cpu_manufacturer = EnumIntegerField(CpuManufacturer, null=True, blank=True)
     cpu_model = models.CharField(max_length=128, blank=True)
@@ -180,7 +180,7 @@ class PortDeviceMixin(models.Model):
         return [(assign.connected_device.object, assign.device_port) for assign in assignments]
 
 
-class PowerDistributionUnit(PortDeviceMixin, DeviceBase):
+class PowerDistributionUnit(PortDeviceMixin, DeviceBase, SlugModel):
     volts = models.PositiveIntegerField(help_text='Rated output voltage')
     amps = models.PositiveIntegerField(help_text='Rated output amperage')
 
@@ -189,12 +189,12 @@ class PowerDistributionUnit(PortDeviceMixin, DeviceBase):
         return self.amps * self.volts
 
 
-class NetworkDevice(PortDeviceMixin, DeviceBase):
+class NetworkDevice(PortDeviceMixin, DeviceBase, SlugModel):
     speed = EnumIntegerField(SwitchSpeed)
     interconnect = EnumIntegerField(SwitchInterconnect)
 
 
-class PortAssignment(models.Model):
+class PortAssignment(SlugModel):
     device = models.ForeignKey('Device', help_text='The device (e.g. switch or pdu) being connected to.')
     device_port = models.PositiveIntegerField()
     connected_device = models.ForeignKey('Device', help_text='The device being connected.', related_name='connected_device')

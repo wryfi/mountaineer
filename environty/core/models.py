@@ -2,23 +2,9 @@ import uuid
 
 from django.utils.functional import cached_property
 from django.db import models
-from django.core.exceptions import ObjectDoesNotExist
 import slugid
 
-
-def _replace_slug(anydict):
-    """ Replace slug in anydict with decoded uuid
-
-    :param dict anydict: a dictionary that might have a key named 'slug'
-    :return: a dictionary where slug is replaced by the decoded uuid
-    """
-    if 'slug' in anydict.keys():
-        try:
-            anydict['uuid'] = slugid.decode(anydict['slug'])
-        except ValueError as ex:
-            raise ObjectDoesNotExist('could not match slug {} to any know object ({})'.format(anydict['slug'], ex))
-        anydict.pop('slug')
-    return anydict
+from environty.core.utils.slug import replace_slug
 
 
 class SlugModelManager(models.Manager):
@@ -26,11 +12,11 @@ class SlugModelManager(models.Manager):
     Allows get and filter lookups in the form of MyModel.objects.get(slug='fF_O8LITQECXPy1BsALZMQ')
     """
     def get(self, **kwargs):
-        kwargs = _replace_slug(kwargs)
+        kwargs = replace_slug(kwargs)
         return super(SlugModelManager, self).get(**kwargs)
 
     def filter(self, **kwargs):
-        kwargs = _replace_slug(kwargs)
+        kwargs = replace_slug(kwargs)
         return super(SlugModelManager, self).filter(**kwargs)
 
 

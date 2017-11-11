@@ -31,17 +31,17 @@ class SlugModelTests(ModelMixinTestCase):
 
     def test_replace_slug(self):
         test_dict = {'slug': 'HyR58xVdRyy3I1QwDUuaCw'}
-        test_dict = models._replace_slug(test_dict)
+        test_dict = models.replace_slug(test_dict)
         self.assertEquals(test_dict['uuid'], uuid.UUID('1f2479f3-155d-472c-b723-54300d4b9a0b'))
 
     def test_replace_invalid_slug(self):
         test_dict = {'slug': 'asdf1234'}
         with self.assertRaises(ObjectDoesNotExist):
-            models._replace_slug(test_dict)
+            models.replace_slug(test_dict)
 
     def test_replace_slug_removed_slug(self):
         test_dict = {'slug': 'HyR58xVdRyy3I1QwDUuaCw'}
-        test_dict = models._replace_slug(test_dict)
+        test_dict = models.replace_slug(test_dict)
         self.assertFalse('slug' in test_dict.keys())
 
     def test_manager_get_by_slug(self):

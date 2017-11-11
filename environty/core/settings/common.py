@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'django_extensions',
     'environty.core',
     'environty.hardware',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
@@ -62,7 +63,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'environty.core.urls'
+ROOT_URLCONF = 'environty.core.urls.root'
 
 TEMPLATES = [
     {
