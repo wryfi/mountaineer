@@ -83,6 +83,14 @@ class ServerTests(TestCase):
         Server.objects.create(manufacturer='del', model='foo', serial='1233')
         Server.objects.create(manufacturer='dell', model='foo', serial='1234')
 
+    def test_delete(self):
+        device = self.server.device
+        self.server.delete()
+        self.assertNotIn(device, Device.objects.all())
+        self.assertEquals(0, len(CabinetAssignment.objects.filter(device=device)))
+        self.assertEquals(0, len(PortAssignment.objects.filter(connected_device=device)))
+        self.assertEquals(0, len(PortAssignment.objects.filter(device=device)))
+
 
 class PduTests(TestCase):
     def setUp(self):

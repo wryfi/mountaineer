@@ -106,7 +106,7 @@ class DeviceBase(SlugModel):
     asset_tag = models.CharField(max_length=128, blank=True, help_text='Asset tag, if any.')
     rack_units = models.IntegerField(blank=True, null=True, help_text='Height of the device, in Rack Units')
     draw = models.PositiveIntegerField(blank=True, null=True, help_text='Power draw of the device, in Watts')
-    device = models.OneToOneField('Device', null=True, blank=True, editable=False)
+    device = models.OneToOneField('Device', on_delete=models.CASCADE, null=True, blank=True, editable=False)
 
     class Meta:
         abstract = True
@@ -121,6 +121,10 @@ class DeviceBase(SlugModel):
             return self.device.cabinetassignment.cabinet
         except CabinetAssignment.DoesNotExist:
             return None
+
+    def delete(self, *args, **kwargs):
+        self.device.delete()
+        super(DeviceBase, self).delete(*args, **kwargs)
 
     @cached_property
     def location(self):
