@@ -76,7 +76,8 @@ class CabinetAssignment(models.Model):
 class Device(models.Model):
     """
     To avoid using generic foreign keys, each of our devices will have a OneToOne
-    relationship with an instance of this model.
+    relationship with an instance of this model. This is similar to Django's concrete
+    model inheritance, but without the automatic joins added by the Django ORM.
     """
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
@@ -176,7 +177,7 @@ class PortDeviceMixin(models.Model):
     @cached_property
     def devices(self):
         assignments = PortAssignment.objects.filter(device=self.device)
-        return [(assign.connected_device, assign.device_port) for assign in assignments]
+        return [(assign.connected_device.object, assign.device_port) for assign in assignments]
 
 
 class PowerDistributionUnit(PortDeviceMixin, DeviceBase):
