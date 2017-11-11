@@ -5,6 +5,8 @@ from environty.core.utils.slug import replace_slug
 
 
 class SlugModelViewSet(ModelViewSet):
+    lookup_field = 'slug'
+
     def get_object(self):
         queryset = self.filter_queryset(self.get_queryset())
 

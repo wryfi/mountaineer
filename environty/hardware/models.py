@@ -103,7 +103,7 @@ class DeviceBase(models.Model):
     manufacturer = models.CharField(max_length=128)
     model = models.CharField(max_length=128)
     serial = models.CharField(max_length=256)
-    asset_id = models.PositiveIntegerField(blank=True, null=True, help_text='ID in external asset database, if any.')
+    asset_id = models.CharField(max_length=64, blank=True, help_text='ID in external asset database, if any.')
     asset_tag = models.CharField(max_length=128, blank=True, help_text='Asset tag, if any.')
     rack_units = models.IntegerField(blank=True, null=True, help_text='Height of the device, in Rack Units')
     draw = models.PositiveIntegerField(blank=True, null=True, help_text='Power draw of the device, in Watts')
@@ -114,7 +114,7 @@ class DeviceBase(models.Model):
         unique_together = ('manufacturer', 'model', 'serial')
 
     def __str__(self):
-        return '{} {}'.format(self.manufacturer, self.model)
+        return '{} {} #{}'.format(self.manufacturer, self.model, self.serial)
 
     @cached_property
     def cabinet(self):
@@ -152,9 +152,8 @@ class DeviceBase(models.Model):
 
 
 class Server(DeviceBase, SlugModel):
-    cpu_count = models.PositiveIntegerField(null=True, blank=True, help_text='Number of physical, socketed CPUs (not cores or threads)')
-    cpu_manufacturer = EnumIntegerField(CpuManufacturer, null=True, blank=True)
-    cpu_model = models.CharField(max_length=128, blank=True)
+    memory = models.PositiveIntegerField(blank=True, null=True, help_text='Physical RAM in MiB')
+    cores = models.PositiveIntegerField(blank=True, null=True, help_text='Number of CPU cores')
 
 
 class PortDeviceMixin(models.Model):

@@ -11,11 +11,11 @@ class RackOrientation(Enum):
 
 
 class SwitchSpeed(Enum):
-    TEN = 1
-    ONE_HUNDRED = 2
-    GIGABIT = 3
-    TEN_GIGABIT = 4
-    FORTY_GIGABIT = 5
+    TEN = 10
+    ONE_HUNDRED = 100
+    GIGABIT = 1000
+    TEN_GIGABIT = 10000
+    FORTY_GIGABIT = 40000
 
     class Labels:
         TEN = '10 Mbps'
@@ -35,14 +35,16 @@ class SwitchInterconnect(Enum):
 
 
 class RackDepth(Enum):
-    FULL = 1
+    QUARTER = 1
     HALF = 2
-    QUARTER = 4
+    THREE_QUARTER = 3
+    FULL = 4
 
     class Labels:
-        FULL = 'Full depth'
-        HALF = 'Half depth'
         QUARTER = 'Quarter depth'
+        HALF = 'Half depth'
+        THREE_QUARTER = 'Three-quarter depth'
+        FULL = 'Full depth'
 
 
 class CpuManufacturer(Enum):
