@@ -5,10 +5,11 @@ from enumfields import EnumIntegerField
 from django.db import models
 
 from environty.hardware import CpuManufacturer, RackDepth, RackOrientation, SwitchInterconnect, SwitchSpeed
+from environty.core.models import SlugModel
 
 
-class Datacenter(models.Model):
-    name = models.SlugField()
+class Datacenter(SlugModel):
+    name = models.CharField(max_length=256)
     vendor = models.CharField(max_length=256)
     address = models.CharField(max_length=256)
     noc_phone = models.CharField(max_length=24, blank=True)
@@ -19,8 +20,8 @@ class Datacenter(models.Model):
        return 'datacenter: {}'.format(self.name)
 
 
-class Cabinet(models.Model):
-    name = models.SlugField()
+class Cabinet(SlugModel):
+    name = models.CharField(max_length=256)
     datacenter = models.ForeignKey('Datacenter')
     rack_units = models.PositiveIntegerField(help_text='Height of rack in Rack Units')
     posts = models.PositiveIntegerField(help_text='Number of posts in the rack (usually 2 or 4)')
@@ -39,10 +40,10 @@ class Cabinet(models.Model):
 
     @cached_property
     def power_available(self):
-        return self.power - self.power_used
+        return self.power - self.power_allocated
 
     @cached_property
-    def power_used(self):
+    def power_allocated(self):
         draw = 0
         assignments = CabinetAssignment.objects.filter(cabinet=self)
         for assign in assignments:
@@ -97,7 +98,7 @@ class Device(models.Model):
                 return type(getattr(self, attr))
 
 
-class DeviceBase(models.Model):
+class DeviceBase(SlugModel):
     manufacturer = models.CharField(max_length=128)
     model = models.CharField(max_length=128)
     serial = models.CharField(max_length=256)

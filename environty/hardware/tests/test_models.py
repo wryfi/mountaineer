@@ -5,7 +5,7 @@ from django.test import TestCase
 from environty.hardware.models import *
 
 
-class CabinetModelTests(TestCase):
+class CabinetTests(TestCase):
     def setUp(self):
         self.datacenter = Datacenter.objects.create(name='datacenter', vendor='vendor', address='122 fake st')
         self.cabinet = Cabinet.objects.create(name='cab1', datacenter=self.datacenter, rack_units=48, posts=4)
@@ -21,7 +21,7 @@ class CabinetModelTests(TestCase):
         self.assertEquals(self.cabinet.power, 12480)
 
     def test_power_used(self):
-        self.assertEquals(self.cabinet.power_used, 350)
+        self.assertEquals(self.cabinet.power_allocated, 350)
 
     def test_power_available(self):
         self.assertEquals(self.cabinet.power_available, 12480 - 350)
@@ -50,9 +50,6 @@ class DeviceTests(TestCase):
 
 
 class ServerTests(TestCase):
-    """
-    Also using ServerTests to test the BaseDevice abstract model methods
-    """
     def setUp(self):
         self.datacenter = Datacenter.objects.create(name='foo', vendor='foo', address='foo')
         self.cabinet = Cabinet.objects.create(name='cab', datacenter=self.datacenter, rack_units=48, posts=4)
@@ -88,9 +85,6 @@ class ServerTests(TestCase):
 
 
 class PduTests(TestCase):
-    """
-    Test PowerDistributionUnit object AND PortDeviceMixin
-    """
     def setUp(self):
         self.pdu = PowerDistributionUnit.objects.create(manufacturer='apc', model='cpa', serial=142, ports=24, volts=208, amps=30)
         self.server = Server.objects.create(manufacturer='dell', model='foo', serial='1233', draw=350)
