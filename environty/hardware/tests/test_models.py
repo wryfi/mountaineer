@@ -37,7 +37,7 @@ class DeviceTests(TestCase):
     def setUp(self):
         self.server = Server.objects.create(manufacturer='dell', model='foo', serial='1233', draw=350)
         self.pdu = PowerDistributionUnit.objects.create(manufacturer='apc', model='cpa', serial=142, ports=24, volts=208, amps=30)
-        self.sw = NetworkDevice.objects.create(manufacturer='juniper', model='srx', serial=3523, ports=24, speed=3, interconnect=1)
+        self.sw = NetworkDevice.objects.create(manufacturer='juniper', model='srx', serial=3523, ports=24, speed=1000, interconnect=1)
 
     def test_device(self):
         self.assertEquals(type(self.server.device), Device)
@@ -54,7 +54,7 @@ class ServerTests(TestCase):
         self.datacenter = Datacenter.objects.create(name='foo', vendor='foo', address='foo')
         self.cabinet = Cabinet.objects.create(name='cab', datacenter=self.datacenter, rack_units=48, posts=4)
         self.pdu = PowerDistributionUnit.objects.create(manufacturer='apc', model='cpa', serial=142, ports=24, volts=208, amps=30)
-        self.sw = NetworkDevice.objects.create(manufacturer='juniper', model='srx', serial=3523, ports=24, speed=3, interconnect=1)
+        self.sw = NetworkDevice.objects.create(manufacturer='juniper', model='srx', serial=3523, ports=24, speed=1000, interconnect=1)
         self.server = Server.objects.create(manufacturer='dell', model='foo', serial='1233', draw=350)
         CabinetAssignment.objects.create(cabinet=self.cabinet, device=self.server.device, position=35)
         PortAssignment.objects.create(device=self.pdu.device, device_port=5, connected_device=self.server.device)

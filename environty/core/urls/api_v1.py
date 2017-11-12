@@ -1,11 +1,10 @@
 from django.conf.urls import include, url
 
 from environty.hardware.api import urls_v1 as hardware_urls
-from environty.core.api import routers
+from environty.core.api import views
 
-router = routers.ExtensibleRouter()
-router.extend(hardware_urls.router)
 
 urlpatterns = [
-    url(r'^', include(router.urls)),
+    url(r'^$', views.v1_root, name='root'),
+    url(r'^hardware/', include(hardware_urls)),
 ]

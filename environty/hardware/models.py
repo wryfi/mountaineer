@@ -5,7 +5,7 @@ from enumfields import EnumIntegerField
 from django.db import models
 
 from environty.hardware import CpuManufacturer, RackDepth, RackOrientation, SwitchInterconnect, SwitchSpeed
-from environty.core.models import SlugModel
+from environty.core.models import SlugModel, SlugField
 
 
 class Datacenter(SlugModel):

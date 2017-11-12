@@ -16,10 +16,12 @@ Including another URLconf
 from django.conf.urls import include, url
 from django.contrib import admin
 
+from environty.core.api import views as api_views
 from . import api_v1
 
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
+    url(r'^api/$', api_views.root, name='api-root'),
     url(r'^api/v1/', include(api_v1, namespace='api_v1')),
 ]

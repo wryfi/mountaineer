@@ -1,18 +1,20 @@
 from environty.hardware.models import Cabinet, CabinetAssignment, Datacenter, NetworkDevice, PortAssignment, PowerDistributionUnit, Server
 from environty.hardware.api.serializers import CabinetSerializer, CabinetAssignmentSerializer, DatacenterSerializer, NetworkDeviceSerializer, PduSerializer, PortAssignmentSerializer, ServerDetailSerializer
-from environty.core.api.viewsets import SlugModelViewSet
+from rest_framework.viewsets import ModelViewSet
+
+
+class SlugModelViewSet(ModelViewSet):
+    lookup_field = 'slug'
 
 
 class DatacenterModelViewSet(SlugModelViewSet):
     queryset = Datacenter.objects.all()
     serializer_class = DatacenterSerializer
-    lookup_field = 'slug'
 
 
 class CabinetModelViewSet(SlugModelViewSet):
     queryset = Cabinet.objects.all()
     serializer_class = CabinetSerializer
-    lookup_field = 'slug'
 
 
 class CabinetAssignmentModelViewSet(SlugModelViewSet):
@@ -23,7 +25,6 @@ class CabinetAssignmentModelViewSet(SlugModelViewSet):
 class ServerModelViewSet(SlugModelViewSet):
     queryset = Server.objects.all()
     serializer_class = ServerDetailSerializer
-    lookup_field = 'slug'
 
 
 class PduModelViewSet(SlugModelViewSet):
