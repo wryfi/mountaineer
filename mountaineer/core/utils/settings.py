@@ -12,8 +12,8 @@ def get_env(variable):
 
 def get_log_dir():
     log_dir = None
-    if os.access('/var/log/environty', os.W_OK):
-        log_dir = '/var/log/environty'
+    if os.access('/var/log/mountaineer', os.W_OK):
+        log_dir = '/var/log/mountaineer'
     elif 'HOME' in os.environ and os.access(os.path.join(os.environ['HOME'], 'var', 'log'), os.W_OK):
         log_dir = os.path.join(os.environ['HOME'], 'var', 'log')
     elif 'HOME' in os.environ:

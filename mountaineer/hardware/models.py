@@ -4,8 +4,8 @@ from django.utils.functional import cached_property
 from enumfields import EnumIntegerField
 from django.db import models
 
-from environty.hardware import CpuManufacturer, RackDepth, RackOrientation, SwitchInterconnect, SwitchSpeed
-from environty.core.models import SlugModel, SlugField
+from mountaineer.hardware import RackDepth, RackOrientation, SwitchInterconnect, SwitchSpeed
+from mountaineer.core.models import SlugModel
 
 
 class Datacenter(SlugModel):

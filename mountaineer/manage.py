@@ -4,7 +4,7 @@ import sys
 
 
 def main():
-    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "environty.core.settings.common")
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "mountaineer.core.settings.common")
     try:
         from django.core.management import execute_from_command_line
     except ImportError:

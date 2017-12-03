@@ -5,7 +5,7 @@ from __future__ import unicode_literals
 from django.db import migrations, models
 import django.db.models.deletion
 import enumfields.fields
-import environty.hardware
+import mountaineer.hardware
 import uuid
 
 
@@ -31,8 +31,8 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('position', models.PositiveIntegerField(blank=True, null=True)),
-                ('orientation', enumfields.fields.EnumIntegerField(blank=True, enum=environty.hardware.RackOrientation, null=True)),
-                ('depth', enumfields.fields.EnumIntegerField(blank=True, enum=environty.hardware.RackDepth, null=True)),
+                ('orientation', enumfields.fields.EnumIntegerField(blank=True, enum=mountaineer.hardware.RackOrientation, null=True)),
+                ('depth', enumfields.fields.EnumIntegerField(blank=True, enum=mountaineer.hardware.RackDepth, null=True)),
                 ('cabinet', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='hardware.Cabinet')),
             ],
         ),
@@ -67,8 +67,8 @@ class Migration(migrations.Migration):
                 ('rack_units', models.IntegerField(blank=True, null=True)),
                 ('name', models.SlugField()),
                 ('ports', models.PositiveIntegerField(help_text='Number of ports available on the device')),
-                ('speed', enumfields.fields.EnumIntegerField(enum=environty.hardware.SwitchSpeed)),
-                ('interconnect', enumfields.fields.EnumIntegerField(enum=environty.hardware.SwitchInterconnect)),
+                ('speed', enumfields.fields.EnumIntegerField(enum=mountaineer.hardware.SwitchSpeed)),
+                ('interconnect', enumfields.fields.EnumIntegerField(enum=mountaineer.hardware.SwitchInterconnect)),
                 ('device', models.OneToOneField(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='hardware.Device')),
             ],
             options={
@@ -117,7 +117,7 @@ class Migration(migrations.Migration):
                 ('serial', models.CharField(blank=True, max_length=256)),
                 ('rack_units', models.IntegerField(blank=True, null=True)),
                 ('cpu_count', models.PositiveIntegerField(blank=True, help_text='Number of physical, socketed CPUs (not cores or threads)', null=True)),
-                ('cpu_manufacturer', enumfields.fields.EnumIntegerField(blank=True, enum=environty.hardware.CpuManufacturer, null=True)),
+                ('cpu_manufacturer', enumfields.fields.EnumIntegerField(blank=True, enum=mountaineer.hardware.CpuManufacturer, null=True)),
                 ('cpu_model', models.CharField(blank=True, max_length=128)),
                 ('device', models.OneToOneField(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='hardware.Device')),
             ],

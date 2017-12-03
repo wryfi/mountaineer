@@ -1,7 +1,8 @@
-from rest_framework import serializers
+from rest_framework import response, serializers, status
 
-from environty.hardware.models import Cabinet, CabinetAssignment, Datacenter, NetworkDevice, PortAssignment, PowerDistributionUnit, Server
-
+from mountaineer.hardware.models import (
+    Cabinet, CabinetAssignment, Datacenter, NetworkDevice, PortAssignment, PowerDistributionUnit, Server
+)
 
 class DeviceIdModelSerializer(serializers.HyperlinkedModelSerializer):
     device_id = serializers.SerializerMethodField()
@@ -24,7 +25,9 @@ class DatacenterSerializer(serializers.HyperlinkedModelSerializer):
 
 class CabinetSerializer(serializers.HyperlinkedModelSerializer):
     slug = serializers.ReadOnlyField()
-    datacenter = serializers.HyperlinkedRelatedField(queryset=Datacenter.objects.all(), view_name='api_v1:hardware:datacenter-detail', lookup_field='slug')
+    datacenter = serializers.HyperlinkedRelatedField(
+        queryset=Datacenter.objects.all(), view_name='api_v1:hardware:datacenter-detail', lookup_field='slug'
+    )
     url = serializers.HyperlinkedIdentityField(view_name='api_v1:hardware:cabinet-detail', lookup_field='slug')
 
     class Meta:
@@ -33,11 +36,15 @@ class CabinetSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class CabinetAssignmentSerializer(DeviceIdModelSerializer):
-    cabinet = serializers.HyperlinkedRelatedField(queryset=Cabinet.objects.all(), view_name='api_v1:hardware:cabinet-detail', lookup_field='slug')
+    cabinet = serializers.HyperlinkedRelatedField(
+        queryset=Cabinet.objects.all(), view_name='api_v1:hardware:cabinet-detail', lookup_field='slug'
+    )
     depth = serializers.SerializerMethodField()
     orientation = serializers.SerializerMethodField()
     device_name = serializers.SerializerMethodField()
-    url = serializers.HyperlinkedIdentityField(view_name='api_v1:hardware:cabinetassignment-detail', lookup_field='slug')
+    url = serializers.HyperlinkedIdentityField(
+        view_name='api_v1:hardware:cabinetassignment-detail', lookup_field='slug'
+    )
 
     class Meta:
         model = CabinetAssignment
@@ -67,7 +74,9 @@ class ServerDetailSerializer(DeviceIdModelSerializer):
 
 
 class PduSerializer(DeviceIdModelSerializer):
-    url = serializers.HyperlinkedIdentityField(view_name='api_v1:hardware:powerdistributionunit-detail', lookup_field='slug')
+    url = serializers.HyperlinkedIdentityField(
+        view_name='api_v1:hardware:powerdistributionunit-detail', lookup_field='slug'
+    )
     watts = serializers.SerializerMethodField()
     cabinet = serializers.HyperlinkedRelatedField(
         queryset=Cabinet.objects.all(), view_name='api_v1:hardware:cabinet-detail', lookup_field='slug'

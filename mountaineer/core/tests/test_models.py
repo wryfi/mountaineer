@@ -1,18 +1,18 @@
 import uuid
 
-from environty.core.tests import ModelMixinTestCase
-from environty.core import models
+from mountaineer.core.tests import ModelMixinTestCase
+from mountaineer.core import models
 
 
 class SlugModelTests(ModelMixinTestCase):
     mixin = models.SlugModel
 
     def test_slug(self):
-        test_instance = self.model()
+        test_instance = self.model.objects.create()
         self.assertTrue(hasattr(test_instance, 'slug'))
 
     def test_slug_cleans_to_uuid(self):
-        test_instance = self.model()
+        test_instance = self.model.objects.create()
         test_instance.clean_fields()
         self.assertTrue(type(test_instance.slug) == uuid.UUID)
 

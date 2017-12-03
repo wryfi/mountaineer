@@ -5,7 +5,7 @@ from django.core import exceptions
 from django.db.models import fields
 from django.db import models
 
-from environty.core.utils.slug import SLUGID_NICE_REGEX, slug_to_uuid, slugid_nice, uuid_to_slug
+from mountaineer.core.utils.slug import SLUGID_NICE_REGEX, slug_to_uuid, slugid_nice, uuid_to_slug
 
 
 class SlugField(fields.UUIDField):

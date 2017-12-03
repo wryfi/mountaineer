@@ -1,6 +1,12 @@
-from environty.hardware.models import Cabinet, CabinetAssignment, Datacenter, NetworkDevice, PortAssignment, PowerDistributionUnit, Server
-from environty.hardware.api.serializers import CabinetSerializer, CabinetAssignmentSerializer, DatacenterSerializer, NetworkDeviceSerializer, PduSerializer, PortAssignmentSerializer, ServerDetailSerializer
+from mountaineer.hardware.models import (
+    Cabinet, CabinetAssignment, Datacenter, NetworkDevice, PortAssignment, PowerDistributionUnit, Server
+)
+from mountaineer.hardware.api.serializers import (
+    CabinetSerializer, CabinetAssignmentSerializer, DatacenterSerializer, NetworkDeviceSerializer,
+    PduSerializer, PortAssignmentSerializer, ServerDetailSerializer
+)
 from rest_framework.viewsets import ModelViewSet
+from rest_framework import response, status
 
 
 class SlugModelViewSet(ModelViewSet):
@@ -20,6 +26,13 @@ class CabinetModelViewSet(SlugModelViewSet):
 class CabinetAssignmentModelViewSet(SlugModelViewSet):
     queryset = CabinetAssignment.objects.all()
     serializer_class = CabinetAssignmentSerializer
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        #headers = self.get_success_headers(serializer.data)
+        print(serializer.data)
+        return response.Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
 
 class ServerModelViewSet(SlugModelViewSet):

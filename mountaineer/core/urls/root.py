@@ -1,4 +1,4 @@
-"""environty URL Configuration
+"""mountaineer URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/1.11/topics/http/urls/
@@ -16,7 +16,7 @@ Including another URLconf
 from django.conf.urls import include, url
 from django.contrib import admin
 
-from environty.core.api import views as api_views
+from mountaineer.core.api import views as api_views
 from . import api_v1
 
 

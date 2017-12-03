@@ -1,7 +1,7 @@
 from django.conf.urls import include, url
 
-from environty.hardware.api import urls_v1 as hardware_urls
-from environty.core.api import views
+from mountaineer.hardware.api import urls_v1 as hardware_urls
+from mountaineer.core.api import views
 
 
 urlpatterns = [

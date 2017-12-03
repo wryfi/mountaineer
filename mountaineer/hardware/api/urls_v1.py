@@ -1,8 +1,8 @@
 from rest_framework import routers
 from django.conf.urls import include, url
 
-from environty.hardware.api import views
-from environty.hardware.api import viewsets
+from mountaineer.hardware.api import views
+from mountaineer.hardware.api import viewsets
 
 
 router = routers.SimpleRouter()

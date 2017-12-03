@@ -3,7 +3,7 @@
 from __future__ import unicode_literals
 
 from django.db import migrations, models
-import environty.core.models
+import mountaineer.core.models
 import uuid
 
 
@@ -18,7 +18,7 @@ class Migration(migrations.Migration):
             name='SlugTestModel',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('slug', environty.core.models.SlugField(db_index=True, default=uuid.uuid4, editable=False)),
+                ('slug', mountaineer.core.models.SlugField(db_index=True, default=uuid.uuid4, editable=False)),
             ],
         ),
         migrations.AlterField(

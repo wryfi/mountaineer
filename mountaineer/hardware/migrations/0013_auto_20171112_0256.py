@@ -3,8 +3,8 @@
 from __future__ import unicode_literals
 
 from django.db import migrations
-import environty.core.models
-import environty.core.utils.slug
+import mountaineer.core.models
+import mountaineer.core.utils.slug
 
 
 class Migration(migrations.Migration):
@@ -60,36 +60,36 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='cabinet',
             name='slug',
-            field=environty.core.models.SlugField(db_index=True, default=environty.core.utils.slug.slugid_nice, editable=False),
+            field=mountaineer.core.models.SlugField(db_index=True, default=mountaineer.core.utils.slug.slugid_nice, editable=False),
         ),
         migrations.AddField(
             model_name='cabinetassignment',
             name='slug',
-            field=environty.core.models.SlugField(db_index=True, default=environty.core.utils.slug.slugid_nice, editable=False),
+            field=mountaineer.core.models.SlugField(db_index=True, default=mountaineer.core.utils.slug.slugid_nice, editable=False),
         ),
         migrations.AddField(
             model_name='datacenter',
             name='slug',
-            field=environty.core.models.SlugField(db_index=True, default=environty.core.utils.slug.slugid_nice, editable=False),
+            field=mountaineer.core.models.SlugField(db_index=True, default=mountaineer.core.utils.slug.slugid_nice, editable=False),
         ),
         migrations.AddField(
             model_name='networkdevice',
             name='slug',
-            field=environty.core.models.SlugField(db_index=True, default=environty.core.utils.slug.slugid_nice, editable=False),
+            field=mountaineer.core.models.SlugField(db_index=True, default=mountaineer.core.utils.slug.slugid_nice, editable=False),
         ),
         migrations.AddField(
             model_name='portassignment',
             name='slug',
-            field=environty.core.models.SlugField(db_index=True, default=environty.core.utils.slug.slugid_nice, editable=False),
+            field=mountaineer.core.models.SlugField(db_index=True, default=mountaineer.core.utils.slug.slugid_nice, editable=False),
         ),
         migrations.AddField(
             model_name='powerdistributionunit',
             name='slug',
-            field=environty.core.models.SlugField(db_index=True, default=environty.core.utils.slug.slugid_nice, editable=False),
+            field=mountaineer.core.models.SlugField(db_index=True, default=mountaineer.core.utils.slug.slugid_nice, editable=False),
         ),
         migrations.AddField(
             model_name='server',
             name='slug',
-            field=environty.core.models.SlugField(db_index=True, default=environty.core.utils.slug.slugid_nice, editable=False),
+            field=mountaineer.core.models.SlugField(db_index=True, default=mountaineer.core.utils.slug.slugid_nice, editable=False),
         ),
     ]

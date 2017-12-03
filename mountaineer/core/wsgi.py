@@ -1,5 +1,5 @@
 """
-WSGI config for environty project.
+WSGI config for mountaineer project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 

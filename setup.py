@@ -9,17 +9,17 @@ with open(os.path.join(HERE, 'VERSION')) as versionfile:
 
 
 setup(
-    name='environty',
+    name='mountaineer',
     version=VERSION,
     packages=find_packages(),
-    url='https://github.com/wryfi/environty',
+    url='https://github.com/wryfi/mountaineer',
     license='BSD',
     author='Chris Haumesser',
     author_email='ch@wryfi.net',
     description='manages operations inventory and environments',
     entry_points={
        'console_scripts': [
-           'environty-manager=environty.manage:main',
+           'mountaineer-manager=mountaineer.manage:main',
        ],
    },
 )

@@ -1,1 +1,0 @@
-from environty.core.settings.common import *
