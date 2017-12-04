@@ -1,8 +1,12 @@
-from rest_framework import response, serializers, status
+from rest_framework import serializers
 
 from mountaineer.hardware.models import (
     Cabinet, CabinetAssignment, Datacenter, NetworkDevice, PortAssignment, PowerDistributionUnit, Server
 )
+from mountaineer.hardware import RackDepth, RackOrientation, SwitchSpeed, SwitchInterconnect
+from mountaineer.core.api.fields import SerializerEnumField
+from mountaineer.core.utils.slug import slugid_nice
+
 
 class DeviceIdModelSerializer(serializers.HyperlinkedModelSerializer):
     device_id = serializers.SerializerMethodField()
@@ -35,12 +39,14 @@ class CabinetSerializer(serializers.HyperlinkedModelSerializer):
         fields = '__all__'
 
 
-class CabinetAssignmentSerializer(DeviceIdModelSerializer):
+class CabinetAssignmentSerializer(serializers.HyperlinkedModelSerializer):
+    slug = serializers.CharField(read_only=True, default=slugid_nice())
+    device_id = serializers.UUIDField()
     cabinet = serializers.HyperlinkedRelatedField(
         queryset=Cabinet.objects.all(), view_name='api_v1:hardware:cabinet-detail', lookup_field='slug'
     )
-    depth = serializers.SerializerMethodField()
-    orientation = serializers.SerializerMethodField()
+    depth = SerializerEnumField(enum=RackDepth)
+    orientation = SerializerEnumField(enum=RackOrientation)
     device_name = serializers.SerializerMethodField()
     url = serializers.HyperlinkedIdentityField(
         view_name='api_v1:hardware:cabinetassignment-detail', lookup_field='slug'
@@ -79,9 +85,9 @@ class PduSerializer(DeviceIdModelSerializer):
     )
     watts = serializers.SerializerMethodField()
     cabinet = serializers.HyperlinkedRelatedField(
-        queryset=Cabinet.objects.all(), view_name='api_v1:hardware:cabinet-detail', lookup_field='slug'
+        view_name='api_v1:hardware:cabinet-detail', lookup_field='slug', read_only=True
     )
-
+    
     class Meta:
         model = PowerDistributionUnit
         exclude = ('device',)
@@ -92,10 +98,10 @@ class PduSerializer(DeviceIdModelSerializer):
 
 class NetworkDeviceSerializer(DeviceIdModelSerializer):
     url = serializers.HyperlinkedIdentityField(view_name='api_v1:hardware:networkdevice-detail', lookup_field='slug')
-    speed = serializers.SerializerMethodField()
-    interconnect = serializers.SerializerMethodField()
+    speed = SerializerEnumField(enum=SwitchSpeed)
+    interconnect = SerializerEnumField(enum=SwitchInterconnect)
     cabinet = serializers.HyperlinkedRelatedField(
-        queryset=Cabinet.objects.all(), view_name='api_v1:hardware:cabinet-detail', lookup_field='slug'
+        view_name='api_v1:hardware:cabinet-detail', lookup_field='slug', read_only=True
     )
 
     class Meta:
