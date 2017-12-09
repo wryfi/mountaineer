@@ -12,6 +12,10 @@ class SerializerEnumField(serializers.Field):
     def to_internal_value(self, data):
         if not self.enum:
             raise serializers.ValidationError('You must specify an enum in the field\'s kwargs')
-        for choice in self.enum.choices():
-            if choice[1] == data:
-                return choice[0]
+        try:
+            data = int(data)
+            return data
+        except ValueError:
+            for choice in self.enum.choices():
+                if choice[1] == data:
+                    return choice[0]

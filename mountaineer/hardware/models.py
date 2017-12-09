@@ -4,7 +4,7 @@ from django.utils.functional import cached_property
 from enumfields import EnumIntegerField
 from django.db import models
 
-from mountaineer.hardware import RackDepth, RackOrientation, SwitchInterconnect, SwitchSpeed
+from mountaineer.hardware import CabinetAttachmentMethod, CabinetFastener, RackDepth, RackOrientation, SwitchInterconnect, SwitchSpeed
 from mountaineer.core.models import SlugModel
 
 
@@ -24,7 +24,13 @@ class Cabinet(SlugModel):
     name = models.CharField(max_length=256)
     datacenter = models.ForeignKey('Datacenter')
     rack_units = models.PositiveIntegerField(help_text='Height of rack in Rack Units')
-    posts = models.PositiveIntegerField(help_text='Number of posts in the rack (usually 2 or 4)')
+    posts = models.PositiveIntegerField(help_text='Number of posts in the rack (usually 4, sometimes 2)')
+    depth = models.DecimalField(null=True, blank=True, decimal_places=3, max_digits=6,
+                                help_text='Distance from front to rear post (inches)')
+    width = models.DecimalField(null=True, blank=True, decimal_places=3, max_digits=6,
+                                help_text='Width (inches, usually 19.0)')
+    attachment = EnumIntegerField(CabinetAttachmentMethod, null=True, blank=True, help_text='Hardware attachment method')
+    fasteners = EnumIntegerField(CabinetFastener, null=True, blank=True, help_text='Hardware fasteners in use')
 
     def __str__(self):
         return 'cabinet: {}'.format(self.name)
@@ -33,13 +39,13 @@ class Cabinet(SlugModel):
     def power(self):
         watts = 0
         assignments = CabinetAssignment.objects.filter(cabinet=self)
-        pdus = [assign.device.object for assign in assignments if assign.device.type == PowerDistributionUnit]
+        pdus = [assign.device.instance for assign in assignments if assign.device.type == PowerDistributionUnit]
         for pdu in pdus:
             watts += pdu.watts
         return watts
 
     @cached_property
-    def power_available(self):
+    def power_unallocated(self):
         return self.power - self.power_allocated
 
     @cached_property
@@ -47,7 +53,7 @@ class Cabinet(SlugModel):
         draw = 0
         assignments = CabinetAssignment.objects.filter(cabinet=self)
         for assign in assignments:
-            device = assign.device.object
+            device = assign.device.instance
             if device.draw:
                 draw += device.draw
         return draw
@@ -55,7 +61,7 @@ class Cabinet(SlugModel):
     @cached_property
     def devices(self):
         assignments = CabinetAssignment.objects.filter(cabinet=self)
-        return [(assign.device.object, assign.position) for assign in assignments]
+        return [(assign.device.instance, assign.position) for assign in assignments]
 
 
 class CabinetAssignment(SlugModel):
@@ -85,9 +91,10 @@ class Device(models.Model):
         for attr in ['server', 'powerdistributionunit', 'networkdevice']:
             if hasattr(self, attr):
                 return getattr(self, attr).__str__()
+        return 'device'
 
     @cached_property
-    def object(self):
+    def instance(self):
         for attr in ['server', 'powerdistributionunit', 'networkdevice']:
             if hasattr(self, attr):
                 return getattr(self, attr)
@@ -138,7 +145,7 @@ class DeviceBase(models.Model):
     @cached_property
     def pdus(self):
         assignments = PortAssignment.objects.filter(connected_device=self.device)
-        return [(assign.device.object, assign.device_port) for assign in assignments if assign.device.type == PowerDistributionUnit]
+        return [(assign.device.instance, assign.device_port) for assign in assignments if assign.device.type == PowerDistributionUnit]
 
     def save(self, *args, **kwargs):
         if not self.device:
@@ -148,7 +155,7 @@ class DeviceBase(models.Model):
     @cached_property
     def uplinks(self):
         assignments = PortAssignment.objects.filter(connected_device=self.device)
-        return [(assign.device.object, assign.device_port) for assign in assignments if assign.device.type == NetworkDevice]
+        return [(assign.device.instance, assign.device_port) for assign in assignments if assign.device.type == NetworkDevice]
 
 
 class Server(DeviceBase, SlugModel):
@@ -176,7 +183,7 @@ class PortDeviceMixin(models.Model):
     @cached_property
     def devices(self):
         assignments = PortAssignment.objects.filter(device=self.device)
-        return [(assign.connected_device.object, assign.device_port) for assign in assignments]
+        return [(assign.connected_device.instance, assign.device_port) for assign in assignments]
 
 
 class PowerDistributionUnit(PortDeviceMixin, DeviceBase, SlugModel):
@@ -202,9 +209,9 @@ class PortAssignment(SlugModel):
         unique_together = ('device', 'device_port')
 
     def __str__(self):
-        return '{} port {} < {}'.format(self.device, self.device_port, self.connected_device.object)
+        return '{} port {} < {}'.format(self.device, self.device_port, self.connected_device.instance)
 
     def save(self, *args, **kwargs):
-        if self.device_port not in self.device.object.ports_available:
+        if self.device_port not in self.device.instance.ports_available:
             raise RuntimeError('Requested port is unavailable')
         super(PortAssignment, self).save(*args, **kwargs)

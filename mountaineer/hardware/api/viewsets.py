@@ -3,7 +3,7 @@ from mountaineer.hardware.models import (
 )
 from mountaineer.hardware.api.serializers import (
     CabinetSerializer, CabinetAssignmentSerializer, DatacenterSerializer, NetworkDeviceSerializer,
-    PduSerializer, PortAssignmentSerializer, ServerDetailSerializer
+    PduSerializer, PortAssignmentSerializer, ServerSerializer
 )
 from rest_framework.viewsets import ModelViewSet
 from rest_framework import response, status
@@ -30,7 +30,7 @@ class CabinetAssignmentModelViewSet(SlugModelViewSet):
 
 class ServerModelViewSet(SlugModelViewSet):
     queryset = Server.objects.all()
-    serializer_class = ServerDetailSerializer
+    serializer_class = ServerSerializer
 
 
 class PduModelViewSet(SlugModelViewSet):

@@ -24,7 +24,7 @@ class CabinetTests(TestCase):
         self.assertEquals(self.cabinet.power_allocated, 350)
 
     def test_power_available(self):
-        self.assertEquals(self.cabinet.power_available, 12480 - 350)
+        self.assertEquals(self.cabinet.power_unallocated, 12480 - 350)
 
     def test_devices(self):
         self.assertIn((self.pdu1, 1), self.cabinet.devices)
@@ -42,11 +42,11 @@ class DeviceTests(TestCase):
     def test_device(self):
         self.assertEquals(type(self.server.device), Device)
         self.assertEquals(self.server.device.type, Server)
-        self.assertEquals(self.server.device.object, self.server)
+        self.assertEquals(self.server.device.instance, self.server)
         self.assertEquals(self.pdu.device.type, PowerDistributionUnit)
-        self.assertEquals(self.pdu.device.object, self.pdu)
+        self.assertEquals(self.pdu.device.instance, self.pdu)
         self.assertEquals(self.sw.device.type, NetworkDevice)
-        self.assertEquals(self.sw.device.object, self.sw)
+        self.assertEquals(self.sw.device.instance, self.sw)
 
 
 class ServerTests(TestCase):
