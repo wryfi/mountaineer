@@ -69,7 +69,7 @@ class CabinetAttachmentMethod(Enum):
     DIRECT_ATTACH = 2
 
     class Labels:
-        CAGE_NUT_95 = '95mm cage nut'
+        CAGE_NUT_95 = '9.5mm cage nut'
         DIRECT_ATTACH = 'direct attachment'
 
 

@@ -91,7 +91,7 @@ class Device(models.Model):
         for attr in ['server', 'powerdistributionunit', 'networkdevice']:
             if hasattr(self, attr):
                 return getattr(self, attr).__str__()
-        return 'device'
+        return 'device {}'.format(self.id)
 
     @cached_property
     def instance(self):
