@@ -17,16 +17,16 @@ class CabinetTests(TestCase):
         CabinetAssignment.objects.create(cabinet=self.cabinet, device=self.pdu2.device, position=3)
         CabinetAssignment.objects.create(cabinet=self.cabinet, device=self.server.device, position=5)
 
-    def test_power(self):
+    def test_models_cabinet_power(self):
         self.assertEquals(self.cabinet.power, 12480)
 
-    def test_power_used(self):
+    def test_models_cabinet_power_used(self):
         self.assertEquals(self.cabinet.power_allocated, 350)
 
-    def test_power_available(self):
+    def test_models_cabinet_power_available(self):
         self.assertEquals(self.cabinet.power_unallocated, 12480 - 350)
 
-    def test_devices(self):
+    def test_models_cabinet_devices(self):
         self.assertIn((self.pdu1, 1), self.cabinet.devices)
         self.assertIn((self.pdu2, 3), self.cabinet.devices)
         self.assertIn((self.server, 5), self.cabinet.devices)
@@ -39,7 +39,7 @@ class DeviceTests(TestCase):
         self.pdu = PowerDistributionUnit.objects.create(manufacturer='apc', model='cpa', serial=142, ports=24, volts=208, amps=30)
         self.sw = NetworkDevice.objects.create(manufacturer='juniper', model='srx', serial=3523, ports=24, speed=1000, interconnect=1)
 
-    def test_device(self):
+    def test_models_device_device(self):
         self.assertEquals(type(self.server.device), Device)
         self.assertEquals(self.server.device.type, Server)
         self.assertEquals(self.server.device.instance, self.server)
@@ -60,22 +60,22 @@ class ServerTests(TestCase):
         PortAssignment.objects.create(device=self.pdu.device, device_port=5, connected_device=self.server.device)
         PortAssignment.objects.create(device=self.sw.device, device_port=5, connected_device=self.server.device)
 
-    def test_cabinet(self):
+    def test_models_server_cabinet(self):
         self.assertEquals(self.cabinet, self.server.cabinet)
 
-    def test_location(self):
+    def test_models_server_location(self):
         self.assertEquals((self.cabinet, 35), self.server.location)
 
-    def test_pdus(self):
+    def test_models_server_pdus(self):
         self.assertIn((self.pdu, 5), self.server.pdus)
 
-    def test_uplinks(self):
+    def test_models_server_uplinks(self):
         self.assertIn((self.sw, 5), self.server.uplinks)
 
-    def test_save(self):
+    def test_models_server_save(self):
         self.assertEquals(type(self.server.device), Device)
 
-    def test_unique_together(self):
+    def test_models_server_unique_together(self):
         with self.assertRaises(IntegrityError):
             with transaction.atomic():
                 Server.objects.create(manufacturer='dell', model='foo', serial='1233')
@@ -83,7 +83,7 @@ class ServerTests(TestCase):
         Server.objects.create(manufacturer='del', model='foo', serial='1233')
         Server.objects.create(manufacturer='dell', model='foo', serial='1234')
 
-    def test_delete(self):
+    def test_models_server_delete(self):
         device = self.server.device
         self.server.delete()
         self.assertNotIn(device, Device.objects.all())
@@ -98,7 +98,7 @@ class PduTests(TestCase):
         self.server = Server.objects.create(manufacturer='dell', model='foo', serial='1233', draw=350)
         PortAssignment.objects.create(device=self.pdu.device, device_port=5, connected_device=self.server.device)
 
-    def test_ports_used(self):
+    def test_models_pdu_ports_used(self):
         del self.pdu.ports_used
         self.assertEquals(1, len(self.pdu.ports_used))
         self.assertIn(5, self.pdu.ports_used)
@@ -106,7 +106,7 @@ class PduTests(TestCase):
         self.assertNotIn(25, self.pdu.ports_used)
         self.assertNotIn(0, self.pdu.ports_used)
 
-    def test_ports_available(self):
+    def test_models_pdu_ports_available(self):
         del self.pdu.ports_available
         del self.pdu.ports_used
         self.assertEquals(23, len(self.pdu.ports_available))
@@ -114,7 +114,7 @@ class PduTests(TestCase):
         self.assertNotIn(25, self.pdu.ports_available)
         self.assertNotIn(0, self.pdu.ports_available)
 
-    def test_watts(self):
+    def test_models_pdu_watts(self):
         self.assertEquals(6240, self.pdu.watts)
 
 
@@ -125,10 +125,10 @@ class TestPortAssignment(TestCase):
         self.server2 = Server.objects.create(manufacturer='supermicro', model='light', serial='1351', draw=350)
         PortAssignment.objects.create(device=self.pdu.device, device_port=6, connected_device=self.server.device)
 
-    def test_save_used_port(self):
+    def test_models_portassignment_save_used_port(self):
         with self.assertRaises(IntegrityError):
             PortAssignment.objects.create(device=self.pdu.device, device_port=6, connected_device=self.server2.device)
 
-    def test_save_outofrange_port(self):
+    def test_models_portassignment_save_outofrange_port(self):
         with self.assertRaises(RuntimeError):
             PortAssignment.objects.create(device=self.pdu.device, device_port=0, connected_device=self.server2.device)

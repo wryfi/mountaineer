@@ -1,12 +1,12 @@
-from mountaineer.hardware.models import (
-    Cabinet, CabinetAssignment, Datacenter, NetworkDevice, PortAssignment, PowerDistributionUnit, Server
-)
+from rest_framework.viewsets import ModelViewSet
+
 from mountaineer.hardware.api.serializers import (
     CabinetSerializer, CabinetAssignmentSerializer, DatacenterSerializer, NetworkDeviceSerializer,
     PduSerializer, PortAssignmentSerializer, ServerSerializer
 )
-from rest_framework.viewsets import ModelViewSet
-from rest_framework import response, status
+from mountaineer.hardware.models import (
+    Cabinet, CabinetAssignment, Datacenter, NetworkDevice, PortAssignment, PowerDistributionUnit, Server
+)
 
 
 class SlugModelViewSet(ModelViewSet):
