@@ -358,7 +358,7 @@ class PduApiTests(TestCase):
         self.assertEquals(response.status_code, 204)
         self.assertEquals(PowerDistributionUnit.objects.count(), 1)
 
-    def test_api_pdu_delete(self):
+    def test_api_pdu_update(self):
         pdu = self.client.get(self.read_update_delete_url).json()
         pdu['ports'] = 12
         response = self.client.put(self.read_update_delete_url, json.dumps(pdu), content_type='application/json')
