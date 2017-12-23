@@ -4,7 +4,7 @@ from urllib import parse
 from django.test import TestCase
 from django.urls import reverse
 
-from mountaineer.hardware.models import Cabinet, CabinetAssignment, Datacenter, Server
+from mountaineer.hardware.models import Cabinet, CabinetAssignment, Datacenter, Server, PowerDistributionUnit
 
 
 class DatacenterApiTests(TestCase):
@@ -188,9 +188,9 @@ class CabinetAssignmentApiTests(TestCase):
             'position': 41, 'depth': 2, 'orientation': 2
         }
         response = self.client.post(self.create_read_url, create_attrs)
+        self.assertEquals(response.status_code, 201)
         data = response.json()
         cabinet_url = parse.urlparse(data.pop('cabinet')).path
-        self.assertEquals(response.status_code, 201)
         self.assertEquals(cabinet_url, self.cabinet_url)
         self.assertEquals(data['device_id'], str(self.server2.device.id))
         self.assertEquals(data['position'], 41)
@@ -199,6 +199,7 @@ class CabinetAssignmentApiTests(TestCase):
 
     def test_api_cabinetassignment_list(self):
         response = self.client.get(self.create_read_url)
+        self.assertEquals(response.status_code, 200)
         slugs = [item['slug'] for item in response.json()]
         self.assertEquals(len(slugs), 1)
         self.assertIn(self.assignment.slug, slugs)
@@ -218,5 +219,149 @@ class CabinetAssignmentApiTests(TestCase):
 
 
 class ServerApiTests(TestCase):
-    pass
+    def setUp(self):
+        self.server1_attributes = {
+            'manufacturer': 'SuperMicro', 'model': 'Super Server XYZ987', 'serial': 'X123456Y7890',
+            'asset_id': '15315', 'asset_tag': '51351', 'rack_units': 4, 'draw': 280, 'memory': 262144, 'cores': 36
+        }
+        self.server2_attributes = {
+            'manufacturer': 'SuperMicro', 'model': 'Super Server XYZ987', 'serial': 'X931336Y7890',
+            'asset_id': '15316', 'asset_tag': '61351', 'rack_units': 4, 'draw': 280, 'memory': 131072, 'cores': 48
+        }
+        self.server3_attributes = {
+            'manufacturer': 'SuperMicro', 'model': 'Super Server XYZ987', 'serial': 'M987756Y7890',
+            'asset_id': '15317', 'asset_tag': '71351', 'rack_units': 4, 'draw': 280, 'memory': 524288, 'cores': 96
+        }
+        self.server1, _ = Server.objects.get_or_create(**self.server1_attributes)
+        self.server2, _ = Server.objects.get_or_create(**self.server2_attributes)
+        self.create_read_url = reverse('api_v1:hardware:server-list')
+        self.read_update_delete_url = reverse('api_v1:hardware:server-detail', kwargs={'slug': self.server1.slug})
 
+    def test_api_server_detail(self):
+        response = self.client.get(self.read_update_delete_url)
+        self.assertEquals(response.status_code, 200)
+        data = response.json()
+        data_url = parse.urlparse(data.pop('url')).path
+        data_cabinet = data.pop('cabinet')
+        data_cabinet_url = parse.urlparse(data_cabinet).path if data_cabinet else None
+        data_slug = data.pop('slug')
+        data_device_id = data.pop('device_id')
+        self.assertTrue(data_cabinet is None)
+        self.assertTrue(data_cabinet_url is None)
+        self.assertEquals(data_slug, self.server1.slug)
+        self.assertEquals(data_device_id, str(self.server1.device.id))
+        self.assertEquals(data_url, self.read_update_delete_url)
+        self.assertEquals(data, self.server1_attributes)
+
+    def test_api_server_create(self):
+        response = self.client.post(self.create_read_url, self.server3_attributes)
+        self.assertEquals(response.status_code, 201)
+        data = response.json()
+        data_url = parse.urlparse(data.pop('url')).path
+        data_cabinet = data.pop('cabinet')
+        data_cabinet_url = parse.urlparse(data_cabinet).path if data_cabinet else None
+        data_slug = data.pop('slug')
+        data.pop('device_id')
+        self.assertTrue(data_cabinet is None)
+        self.assertTrue(data_cabinet_url is None)
+        self.assertEquals(data_url, reverse('api_v1:hardware:server-detail', kwargs={'slug': data_slug}))
+        self.assertEquals(data, self.server3_attributes)
+
+    def test_api_server_list(self):
+        response = self.client.get(self.create_read_url)
+        self.assertEquals(response.status_code, 200)
+        slugs = [item['slug'] for item in response.json()]
+        self.assertEquals(len(slugs), 2)
+        self.assertIn(self.server1.slug, slugs)
+        self.assertIn(self.server2.slug, slugs)
+
+    def test_api_server_delete(self):
+        response = self.client.delete(self.read_update_delete_url)
+        self.assertEquals(response.status_code, 204)
+        self.assertEquals(Server.objects.count(), 1)
+
+    def test_api_server_update(self):
+        server = self.client.get(self.read_update_delete_url).json()
+        server['memory'], server['cores'] = 524288, 96
+        response = self.client.put(self.read_update_delete_url, json.dumps(server), content_type='application/json')
+        data = response.json()
+        self.assertEquals(response.status_code, 200)
+        self.assertEquals(data['cores'], 96)
+        self.assertEquals(data['memory'], 524288)
+
+
+class PduApiTests(TestCase):
+    def setUp(self):
+        self.pdu1_attributes = {
+            'manufacturer': 'APC', 'model': 'PDU 20830', 'serial': 'A123456B7890', 'amps': 30,
+            'asset_id': '15315', 'asset_tag': '51351', 'rack_units': 4, 'draw': 20, 'ports': 24, 'volts': 208
+        }
+        self.pdu2_attributes = {
+            'manufacturer': 'APC', 'model': 'PDU 20830', 'serial': 'A123456B7891', 'amps': 30,
+            'asset_id': '15315', 'asset_tag': '51351', 'rack_units': 4, 'draw': 20, 'ports': 24, 'volts': 208
+        }
+        self.pdu3_attributes = {
+            'manufacturer': 'APC', 'model': 'PDU 12030', 'serial': 'A123456D7888', 'amps': 30,
+            'asset_id': '15315', 'asset_tag': '51351', 'rack_units': 4, 'draw': 20, 'ports': 24, 'volts': 120
+        }
+        self.pdu1, _ = PowerDistributionUnit.objects.get_or_create(**self.pdu1_attributes)
+        self.pdu2, _ = PowerDistributionUnit.objects.get_or_create(**self.pdu2_attributes)
+        self.create_read_url = reverse('api_v1:hardware:powerdistributionunit-list')
+        self.read_update_delete_url = reverse(
+            'api_v1:hardware:powerdistributionunit-detail', kwargs={'slug': self.pdu1.slug}
+        )
+
+    def test_api_pdu_detail(self):
+        response = self.client.get(self.read_update_delete_url)
+        self.assertEquals(response.status_code, 200)
+        data = response.json()
+        data_url = parse.urlparse(data.pop('url')).path
+        data_cabinet = data.pop('cabinet')
+        data_cabinet_url = parse.urlparse(data_cabinet).path if data_cabinet else None
+        data_slug = data.pop('slug')
+        data_device_id = data.pop('device_id')
+        data_watts = data.pop('watts')
+        self.assertTrue(data_cabinet is None)
+        self.assertTrue(data_cabinet_url is None)
+        self.assertEquals(data_slug, self.pdu1.slug)
+        self.assertEquals(data_device_id, str(self.pdu1.device.id))
+        self.assertEquals(data_url, self.read_update_delete_url)
+        self.assertEquals(data_watts, self.pdu1_attributes['amps'] * self.pdu1_attributes['volts'])
+        self.assertEquals(data, self.pdu1_attributes)
+
+    def test_api_pdu_create(self):
+        response = self.client.post(self.create_read_url, self.pdu3_attributes)
+        self.assertEquals(response.status_code, 201)
+        data = response.json()
+        data_url = parse.urlparse(data.pop('url')).path
+        data_cabinet = data.pop('cabinet')
+        data_cabinet_url = parse.urlparse(data_cabinet).path if data_cabinet else None
+        data_slug = data.pop('slug')
+        data.pop('device_id')
+        data_watts = data.pop('watts')
+        self.assertTrue(data_cabinet is None)
+        self.assertTrue(data_cabinet_url is None)
+        self.assertEquals(data_url, reverse('api_v1:hardware:powerdistributionunit-detail', kwargs={'slug': data_slug}))
+        self.assertEquals(data_watts, self.pdu3_attributes['amps'] * self.pdu3_attributes['volts'])
+        self.assertEquals(data, self.pdu3_attributes)
+
+    def test_api_pdu_list(self):
+        response = self.client.get(self.create_read_url)
+        self.assertEquals(response.status_code, 200)
+        slugs = [item['slug'] for item in response.json()]
+        self.assertEquals(len(slugs), 2)
+        self.assertIn(self.pdu1.slug, slugs)
+        self.assertIn(self.pdu2.slug, slugs)
+
+    def test_api_pdu_delete(self):
+        response = self.client.delete(self.read_update_delete_url)
+        self.assertEquals(response.status_code, 204)
+        self.assertEquals(PowerDistributionUnit.objects.count(), 1)
+
+    def test_api_pdu_delete(self):
+        pdu = self.client.get(self.read_update_delete_url).json()
+        pdu['ports'] = 12
+        response = self.client.put(self.read_update_delete_url, json.dumps(pdu), content_type='application/json')
+        data = response.json()
+        self.assertEquals(response.status_code, 200)
+        self.assertEquals(data['ports'], 12)
