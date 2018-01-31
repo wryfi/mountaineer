@@ -41,6 +41,7 @@ The goals of Mountaineer are several:
 ecosystem of flexible add-ons (coming soon)
 * Rewrite the frontend in a modern javascript framework (most likely
 [cerebral](https://cerebraljs.com/) + [inferno](https://infernojs.org/))
+* Remove dependencies on employer-specific libraries
 
 
 ##  Inventory-Driven Infrastructure
