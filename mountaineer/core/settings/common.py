@@ -30,7 +30,7 @@ HOME = utils.get_env('HOME')
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = utils.get_env('ENVIRONTY_SECRET_KEY')
+SECRET_KEY = utils.get_env('MNTNR_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -49,7 +49,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_extensions',
     'mountaineer.core',
-    'mountaineer.hardware',
     'rest_framework',
 ]
 
@@ -91,10 +90,10 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'mountaineer',
-        'USER' : utils.get_env('ENVIRONTY_POSTGRES_USER'),
-        'PASSWORD' : utils.get_env('ENVIRONTY_POSTGRES_PASSWORD'),
-        'HOST' : utils.get_env('ENVIRONTY_POSTGRES_HOST'),
-        'PORT' : utils.get_env('ENVIRONTY_POSTGRES_PORT')
+        'USER': utils.get_env('MNTNR_POSTGRES_USER'),
+        'PASSWORD': utils.get_env('MNTNR_POSTGRES_PASSWORD'),
+        'HOST': utils.get_env('MNTNR_POSTGRES_HOST'),
+        'PORT': utils.get_env('MNTNR_POSTGRES_PORT')
     },
 }
 
@@ -159,18 +158,18 @@ LOGGING = {
           'level': 'DEBUG',
           'class': 'logging.handlers.RotatingFileHandler',
           'filename': os.path.join(LOG_DIR, 'mountaineer.log'),
-          'maxBytes' : 1024 * 1024 * 5,  # 5MiB
-          'backupCount' : 5,
+          'maxBytes': 1024 * 1024 * 5,  # 5MiB
+          'backupCount': 5,
           'formatter': 'verbose'
       },
     },
     'loggers': {
       'django': {
-          'handlers':['file'],
+          'handlers': ['file'],
           'propagate': True,
           'level': 'DEBUG',
       },
-      'mountaineer' : {
+      'mountaineer': {
           'handlers': ['file'],
           'level': 'DEBUG',
       },

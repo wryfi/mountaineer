@@ -1,3 +1,6 @@
 from mountaineer.core.settings.common import *
 
-DEBUG = False
+
+INSTALLED_APPS += (
+    'mntnr_hardware',
+)
