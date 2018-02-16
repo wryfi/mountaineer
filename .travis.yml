@@ -6,11 +6,12 @@ python:
   - "3.6"
 services:
   - postgresql
+before_install:
+  - pip install -U pip
 install:
   - pip install -r requirements/travis.txt
-  - pip install .
+  - setup.py install
 before_script:
-  - pip install -U pip
   - psql -c 'create database mountaineer;' -U postgres
 script:
   - export DJANGO_SETTINGS_MODULE="mountaineer.core.settings.travis"
@@ -19,8 +20,6 @@ script:
   - export MNTNR_POSTGRES_USER="postgres"
   - export MNTNR_POSTGRES_PASSWORD=""
   - export MNTNR_SECRET_KEY="asdfaireavjkjlnlkjhlj,mcxnvwoieurnalkjsdfh"
-  - pwd
-  - ls
   - mountaineer/manage.py test
   #- coverage run mountaineer/manage.py test
 after_script:
