@@ -1,2 +1,7 @@
 [run]
 source = .
+omit =
+  */settings/*
+  */core/wsgi.py
+  */manage.py
+  setup.py
