@@ -4,7 +4,14 @@ python:
   - "3.4"
   - "3.5"
   - "3.6"
+services:
+  - postgresql
 install:
-  - pip install -r requirements/common.txt
+  - pip install -r requirements/travis.txt
+  - pip install .
+before_script:
+  - psql -c 'create database mountaineer;' -U postgres
 script:
+  - export DJANGO_SETTINGS_MODULE="mountaineer.core.settings.travis"
+  - export MNTNR_SECRET_KEY="asdfaireavjkjlnlkjhlj,mcxnvwoieurnalkjsdfh"
   - mountaineer-manager test
