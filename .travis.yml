@@ -14,4 +14,6 @@ before_script:
 script:
   - export DJANGO_SETTINGS_MODULE="mountaineer.core.settings.travis"
   - export MNTNR_SECRET_KEY="asdfaireavjkjlnlkjhlj,mcxnvwoieurnalkjsdfh"
-  - mountaineer-manager test
+  - coverage run mountaineer/manage.py test
+after_script:
+  - codeclimate-test-reporter --file .coverage
