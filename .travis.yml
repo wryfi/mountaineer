@@ -13,6 +13,10 @@ before_script:
   - psql -c 'create database mountaineer;' -U postgres
 script:
   - export DJANGO_SETTINGS_MODULE="mountaineer.core.settings.travis"
+  - export MNTNR_POSTGRES_HOST="localhost"
+  - export MNTNR_POSTGRES_PORT="5432"
+  - export MNTNR_POSTGRES_USER="postgres"
+  - export MNTNR_POSTGRES_PASSWORD=""
   - export MNTNR_SECRET_KEY="asdfaireavjkjlnlkjhlj,mcxnvwoieurnalkjsdfh"
   - coverage run mountaineer/manage.py test
 after_script:
