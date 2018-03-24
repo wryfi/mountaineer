@@ -1,3 +1,5 @@
+[![Build Status](https://www.travis-ci.org/wryfi/mountaineer.svg?branch=develop)](https://www.travis-ci.org/wryfi/mountaineer)
+
 # Mountaineer: enumerate your operations
 
 An anagram of `enumeration`, `mountaineer` is a Django application and API
