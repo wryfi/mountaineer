@@ -10,7 +10,7 @@ before_install:
   - pip install -U pip
 install:
   - pip install -r requirements/travis.txt
-  - setup.py install
+  - python setup.py install
 before_script:
   - psql -c 'create database mountaineer;' -U postgres
 script:
@@ -20,7 +20,7 @@ script:
   - export MNTNR_POSTGRES_USER="postgres"
   - export MNTNR_POSTGRES_PASSWORD=""
   - export MNTNR_SECRET_KEY="asdfaireavjkjlnlkjhlj,mcxnvwoieurnalkjsdfh"
-  - mountaineer/manage.py test
+  - python mountaineer/manage.py test
   #- coverage run mountaineer/manage.py test
 after_script:
   - codeclimate-test-reporter --file .coverage
