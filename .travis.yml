@@ -1,7 +1,5 @@
 language: python
 python:
-  - "3.3"
-  - "3.4"
   - "3.5"
   - "3.6"
 services:
@@ -20,7 +18,7 @@ script:
   - export MNTNR_POSTGRES_USER="postgres"
   - export MNTNR_POSTGRES_PASSWORD=""
   - export MNTNR_SECRET_KEY="asdfaireavjkjlnlkjhlj,mcxnvwoieurnalkjsdfh"
-  - python mountaineer/manage.py test
+  - mountaineer-manager test
   #- coverage run mountaineer/manage.py test
 after_script:
   - codeclimate-test-reporter --file .coverage
