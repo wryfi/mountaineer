@@ -8,7 +8,7 @@ before_install:
   - pip install -U pip
 install:
   - pip install -r requirements/travis.txt
-  - python setup.py install
+  - python setup.py develop
 before_script:
   - psql -c 'create database mountaineer;' -U postgres
 script:

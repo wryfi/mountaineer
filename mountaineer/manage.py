@@ -1,9 +1,12 @@
 #!/usr/bin/env python
+from __future__ import absolute_import
+
 import os
 import sys
 
 
 def main():
+    print(sys.path)
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "mountaineer.core.settings.common")
     try:
         from django.core.management import execute_from_command_line
