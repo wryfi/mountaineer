@@ -3,10 +3,12 @@ from django.conf.urls import include, url
 from django.conf import settings
 
 from mountaineer.core.api import views
+from rest_framework_swagger.views import get_swagger_view
 
 
 urlpatterns = [
     url(r'^$', views.v1_root, name='root'),
+    url(r'^swagger/', get_swagger_view('api'))
 ]
 
 if 'mntnr_hardware' in settings.INSTALLED_APPS:

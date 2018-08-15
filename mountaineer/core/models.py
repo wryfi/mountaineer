@@ -52,7 +52,7 @@ class SlugModel(models.Model):
     The slug is stored on the model as a uuid4, which is shortened for presentation and
     retrieval using the slugid library. Use slug for lookups instead of primary key.
     """
-    slug = SlugField(default=slugid_nice, editable=False, db_index=True)
+    slug = SlugField(default=slugid_nice, editable=False, db_index=True, unique=True)
 
     class Meta:
         abstract = True

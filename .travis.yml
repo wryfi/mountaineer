@@ -18,7 +18,6 @@ script:
   - export MNTNR_POSTGRES_USER="postgres"
   - export MNTNR_POSTGRES_PASSWORD=""
   - export MNTNR_SECRET_KEY="asdfaireavjkjlnlkjhlj,mcxnvwoieurnalkjsdfh"
-  - mountaineer-manager test
-  #- coverage run mountaineer/manage.py test
-after_script:
+  - coverage run ./mountaineer/manage.py test
+after_success:
   - codeclimate-test-reporter --file .coverage
