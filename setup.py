@@ -17,9 +17,9 @@ setup(
     author='Chris Haumesser',
     author_email='ch@wryfi.net',
     description='manages operations inventory and environments',
-    entry_points={
-       'console_scripts': [
-           'mountaineer-manager=mountaineer.manage:main',
-       ],
-   },
+    # entry_points={
+    #    'console_scripts': [
+    #        'mountaineer-manager=mountaineer.manage:main',
+    #    ],
+    # },
 )
