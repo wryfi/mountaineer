@@ -1,0 +1,20 @@
+swagger: '2.0'
+info:
+  title: Mountaineer
+  description: enumerates all your gear
+  version: '1'
+basePath: '/v1'
+tags:
+  - name: root
+    description: general information
+  - name: hardware
+    description: hardware objects
+paths:
+  /:
+    get:
+      operationId: mountaineer.api_v1.logic.say_hello
+      summary: says hello
+      tags: ['root']
+      responses:
+        default:
+          description: success

@@ -1,21 +1,14 @@
-import importlib
 import os
 
 import connexion
-from sqlalchemy import MetaData
+import yaml
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import MetaData
+
+from mountaineer import utils
 
 
-mountaineer = connexion.FlaskApp(__name__)
-
-mountaineer.app.config.from_object('mountaineer.defaults')
-if 'MNTNR_SETTINGS_FILE' in os.environ.keys():
-    mountaineer.app_config.from_envvar('MNTNR_SETTINGS_FILE')
-
-for api in mountaineer.app.config['MOUNTAINEER_APIS']:
-    module, version = api[0], api[1]
-    spec = importlib.import_module(module + '.spec')
-    mountaineer.add_api(spec.get_spec(version))
+here = os.path.dirname(os.path.realpath(__file__))
 
 constraint_naming_convention = {
   "ix": 'ix_%(column_0_label)s',
@@ -26,8 +19,36 @@ constraint_naming_convention = {
 }
 
 metadata = MetaData(naming_convention=constraint_naming_convention)
-db = SQLAlchemy(mountaineer.app, metadata=metadata)
+db = SQLAlchemy(metadata=metadata)
+
+
+def create_app():
+    mntnr = connexion.FlaskApp('mountaineer')
+
+    mntnr.app.config.from_object('mountaineer.defaults')
+    if 'MNTNR_SETTINGS_FILE' in os.environ.keys():
+        mntnr.app_config.from_envvar('MNTNR_SETTINGS_FILE')
+
+    api_version = mntnr.app.config['API_VERSION']
+    base_specfile = os.path.join(here, 'api_{}'.format(api_version), 'openapi.yml')
+
+    with open(base_specfile, 'rb') as spf:
+        base_spec = yaml.safe_load(spf.read())
+
+    api_spec = utils.assemble_api(mntnr.app.config['MOUNTAINEER_APIS'], base_spec)
+    mntnr.add_api(api_spec)
+
+    db.init_app(mntnr.app)
+
+    return mntnr
+
+
+def get_db():
+    mntnr = create_app()
+    mntnr.app.app_context().push()
+    return db
 
 
 if __name__ == '__main__':
+    mountaineer = create_app()
     mountaineer.run(debug=True, port=8000)
