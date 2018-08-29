@@ -1,11 +1,13 @@
+import importlib
 import os
 
+from deepmerge import always_merger
 import connexion
-import yaml
-from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import MetaData
+from flask_sqlalchemy import SQLAlchemy
+import yaml
 
-from mountaineer import utils
+from mountaineer.database import BaseModel
 
 
 here = os.path.dirname(os.path.realpath(__file__))
@@ -18,8 +20,37 @@ constraint_naming_convention = {
   "pk": "pk_%(table_name)s"
 }
 
+
 metadata = MetaData(naming_convention=constraint_naming_convention)
-db = SQLAlchemy(metadata=metadata)
+db = SQLAlchemy(metadata=metadata, model_class=BaseModel)
+
+
+def assemble_api(mntnr_apis, base_spec):
+    api_spec = {}
+    for api in mntnr_apis:
+        module, version = api[0], api[1]
+        spec = importlib.import_module(module + '.spec')
+        api_spec = always_merger.merge(api_spec, spec.get_spec(version))
+    return always_merger.merge(api_spec, base_spec)
+
+
+def import_format_checks(mntnr_apis):
+    """
+    import_format_checks is used in initializing the application. Custom field
+    types for Connexion/OpenAPI must be registered before the application is
+    started. This function is used to gather and import them all.
+
+    :param mntnr_apis: list of mountaineer APIs, from settings
+    :return: None
+    """
+    from mountaineer import format_checks
+    for api in mntnr_apis:
+        module = api[0]
+        import_statement = 'from {} import format_checks'.format(module)
+        try:
+            exec(import_statement)
+        except ImportError:
+            pass
 
 
 def create_app():
@@ -35,7 +66,9 @@ def create_app():
     with open(base_specfile, 'rb') as spf:
         base_spec = yaml.safe_load(spf.read())
 
-    api_spec = utils.assemble_api(mntnr.app.config['MOUNTAINEER_APIS'], base_spec)
+    import_format_checks(mntnr.app.config['MOUNTAINEER_APIS'])
+
+    api_spec = assemble_api(mntnr.app.config['MOUNTAINEER_APIS'], base_spec)
     mntnr.add_api(api_spec)
 
     db.init_app(mntnr.app)
