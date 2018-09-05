@@ -26,11 +26,20 @@ db = SQLAlchemy(metadata=metadata, model_class=BaseModel)
 
 
 def assemble_api(mntnr_apis, base_spec):
+    """
+    assemble_api combines the OpenAPI specs from each configured application's
+    get_spec() function into one unified API spec.
+
+    :param mntnr_apis: list of mountaineer APIs and versions
+    :param base_spec: the mountaineer base spec
+    :return: combined OpenAPI spec
+    :rtype: dict
+    """
     api_spec = {}
     for api in mntnr_apis:
         module, version = api[0], api[1]
-        spec = importlib.import_module(module + '.spec')
-        api_spec = always_merger.merge(api_spec, spec.get_spec(version))
+        api = importlib.import_module(module)
+        api_spec = always_merger.merge(api_spec, api.get_spec(version))
     return always_merger.merge(api_spec, base_spec)
 
 
