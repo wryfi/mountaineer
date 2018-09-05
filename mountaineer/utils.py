@@ -9,6 +9,14 @@ from mountaineer.app import assemble_api, create_app, db, here
 
 
 def print_spec():
+    """
+    print_spec will print the openapi v2 spec assembled by mountaineer from its
+    various enabled APIs and submodules, as defined in the MOUNTAINEER_APIS
+    flask setting. The output should be suitable for pasting into e.g. the
+    swagger editor for help debugging API spec issues.
+
+    :return: None
+    """
     mntnr = create_app()
     api_version = mntnr.app.config['API_VERSION']
     base_specfile = os.path.join(here, 'api_{}'.format(api_version), 'openapi.yml')
